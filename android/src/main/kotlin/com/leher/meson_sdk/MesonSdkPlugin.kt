@@ -53,7 +53,7 @@ class MesonSdkPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 "tierName" to mesonAdData?.tierName
             )
             Log.i("LEHER", "onAdImpression $ad $impressionData")
-            channel.invokeMethod("onAdImpression", listOf(ad.hashCode(), impressionData.toString()))
+            channel.invokeMethod("onAdImpression", listOf(ad.hashCode(), JSONObject(impressionData).toString()))
         }
 
         override fun onAdDisplayed(ad: MesonInterstitial) {
