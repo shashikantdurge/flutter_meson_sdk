@@ -1,5 +1,6 @@
 package com.leher.meson_sdk
 
+import ai.meson.ads.MesonAdData
 import ai.meson.ads.MesonAdRequestStatus
 import ai.meson.ads.MesonInterstitial
 import ai.meson.ads.listeners.MesonInterstitialAdListener
@@ -31,11 +32,26 @@ class MesonSdkPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     /// when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
 
-    val listener = object : MesonInterstitialAdListener() {
-        override fun onAdImpression(
-            ad: MesonInterstitial,
-            impressionData: JSONObject?
-        ) {
+    private val listener = object : MesonInterstitialAdListener() {
+        override fun onAdImpression(ad: MesonInterstitial, mesonAdData: MesonAdData?) {
+            val impressionData = mapOf(
+                "adUnitFormat" to mesonAdData?.adUnitFormat,
+                "adUnitId" to mesonAdData?.adUnitId,
+                "adUnitName" to mesonAdData?.adUnitName,
+                "appVersion" to mesonAdData?.appVersion,
+                "country" to mesonAdData?.country,
+                "creativeId" to mesonAdData?.creativeId,
+                "currency" to mesonAdData?.currency,
+                "impressionId" to mesonAdData?.impressionId,
+                "lineItemId" to mesonAdData?.lineItemId,
+                "lineItemName" to mesonAdData?.lineItemName,
+                "lineItemType" to mesonAdData?.lineItemType,
+                "networkName" to mesonAdData?.networkName,
+                "networkPlacementId" to mesonAdData?.networkPlacementId,
+                "precision" to mesonAdData?.precision,
+                "publisherRevenue" to mesonAdData?.publisherRevenue,
+                "tierName" to mesonAdData?.tierName
+            )
             Log.i("LEHER", "onAdImpression $ad $impressionData")
             channel.invokeMethod("onAdImpression", listOf(ad.hashCode(), impressionData.toString()))
         }
@@ -132,9 +148,9 @@ class MesonSdkPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         channel.setMethodCallHandler(null)
     }
 
-    private fun initialize(mesonAppId: String, @NonNull result: MethodChannel.Result) {
+    private fun initialize(mesonAppId: String, @NonNull result: Result) {
         if (activity == null) {
-            result.error("NULL_CONTEXT", "Context unavailable", "Context unavailable");
+            result.error("NULL_CONTEXT", "Context unavailable", "Context unavailable")
             return
         }
         val gdprConsent = JSONObject().run {
@@ -153,7 +169,7 @@ class MesonSdkPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         }
 
         val mesonSdkConfiguration =
-            MesonSdkConfiguration.Builder(activity!!, "354414df-7f28-4a1f-96c6-8cfc92cd5c25")
+            MesonSdkConfiguration.Builder(activity!!, mesonAppId)
                 .setConsent(gdprConsent).build()
         /*Initialize Meson SDK*/
         MesonSdk.initialize(mesonSdkConfiguration, object : MesonSdkInitializationListener {
@@ -169,9 +185,9 @@ class MesonSdkPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         })
     }
 
-    private fun createMesonInterstitial(adUnitId: String, @NonNull result: MethodChannel.Result) {
+    private fun createMesonInterstitial(adUnitId: String, @NonNull result: Result) {
         if (activity == null) {
-            result.error("NULL_CONTEXT", "Context unavailable", "Context unavailable");
+            result.error("NULL_CONTEXT", "Context unavailable", "Context unavailable")
             return
         }
         val mesonInterstitial = MesonInterstitial(activity!!, adUnitId)
@@ -181,32 +197,32 @@ class MesonSdkPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 
     private fun setAdListener(
         mesonInterstitial: MesonInterstitial,
-        @NonNull result: MethodChannel.Result
+        @NonNull result: Result
     ) {
         mesonInterstitial.setAdListener(listener)
         result.success(null)
     }
 
-    private fun load(mesonInterstitial: MesonInterstitial, @NonNull result: MethodChannel.Result) {
+    private fun load(mesonInterstitial: MesonInterstitial, @NonNull result: Result) {
         mesonInterstitial.load()
         result.success(null)
     }
 
-    private fun show(mesonInterstitial: MesonInterstitial, @NonNull result: MethodChannel.Result) {
+    private fun show(mesonInterstitial: MesonInterstitial, @NonNull result: Result) {
         mesonInterstitial.show()
         result.success(null)
     }
 
     private fun isAdReady(
         mesonInterstitial: MesonInterstitial,
-        @NonNull result: MethodChannel.Result
+        @NonNull result: Result
     ) {
         result.success(mesonInterstitial.isAdReady())
     }
 
     private fun destroy(
         mesonInterstitial: MesonInterstitial,
-        @NonNull result: MethodChannel.Result
+        @NonNull result: Result
     ) {
         mesonInterstitial.destroy()
         mesonObjects.remove(mesonInterstitial.hashCode())
@@ -214,22 +230,22 @@ class MesonSdkPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        Log.i("MESON_FLUTTER", "onAttachedToActivity $activity");
-        this.activity = binding.getActivity();
+        Log.i("MESON_FLUTTER", "onAttachedToActivity $activity")
+        this.activity = binding.activity
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        Log.i("MESON_FLUTTER", "onDetachedFromActivityForConfigChanges $activity");
-        this.activity = null;
+        Log.i("MESON_FLUTTER", "onDetachedFromActivityForConfigChanges $activity")
+        this.activity = null
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-        Log.i("MESON_FLUTTER", "onReattachedToActivityForConfigChanges $activity");
-        this.activity = binding.getActivity();
+        Log.i("MESON_FLUTTER", "onReattachedToActivityForConfigChanges $activity")
+        this.activity = binding.activity
     }
 
     override fun onDetachedFromActivity() {
-        Log.i("MESON_FLUTTER", "onDetachedFromActivity $activity");
-        this.activity = null;
+        Log.i("MESON_FLUTTER", "onDetachedFromActivity $activity")
+        this.activity = null
     }
 }
