@@ -40,7 +40,6 @@ dependencies {
 
     implementation 'ai.meson.sdk:meson:1.0.0-beta14'
 
-
     implementation 'com.google.android.gms:play-services-ads-identifier:17.0.0'
 
     //InMobi
@@ -56,6 +55,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-ads:21.1.0'
     implementation 'ai.meson.sdk.mediation:admob:21.0.0.0-beta1'
 
+    //Vungle
+    implementation 'com.vungle:publisher-sdk-android:6.11.0'
+    implementation 'ai.meson.sdk.mediation:vungle:6.11.0.0-beta1'
+
     // Additional constraints for Google SDKs
     // For apps targeting Android 12, add WorkManager dependency.
     constraints {
@@ -68,7 +71,7 @@ dependencies {
 
     //Unity
     implementation 'com.unity3d.ads:unity-ads:4.2.1'
-    implementation 'ai.meson.sdk.mediation:unity:4.2.1.0-beta1'
+    implementation 'ai.meson.sdk.mediation:unity:4.2.1.0-beta2'
 
 //    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.21"
 //    implementation "androidx.core:core-ktx:1.8.0"
